@@ -4,22 +4,24 @@ module.exports = {
     commonjs: true,
   },
   extends: [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
   ],
-  parser: "@typescript-eslint/parser",
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
     ecmaVersion: 2018,
-    sourceType: "module",
+    sourceType: 'module',
   },
-  plugins: ["react", "@typescript-eslint"],
+  plugins: ['react', '@typescript-eslint'],
   rules: {
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "prettier/prettier": "error",
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    "@typescript-eslint/no-explicit-any": ["off"],
+    'prettier/prettier': 'error',
+    'no-unused-vars': 'off',
   },
 };
