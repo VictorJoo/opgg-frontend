@@ -27,23 +27,34 @@ import {
 	LankSymbol,
 	LankInfo,
 	LankName,
-	TierRank,
+	TierRankName,
 	Lp,
 	WinLoosses,
 	Late,
+	ChampionBox,
+	MostFace,
+	MostInfoCell,
+	MostInfoName,
+	MostInfoCS,
+	MostInfoKDA,
+	MostInfoScore,
+	MostInfoPlayed,
+	PlayedPercent,
+	PlayedCount,
 } from '@pages/Summoners/styles';
 
-import { SummonerProps, TierRankType } from './types';
+import { Summoner, MostInfo, TierRank, MostChampions, RecentWinRate } from './types';
 
 const Summoners = () => {
 	const [name, setName] = useState('소환사');
-	const [user, setUser] = useState<SummonerProps>();
+	const [user, setUser] = useState<Summoner>();
+	const [most, setMost] = useState<MostInfo>();
 	const [loading, setLoading] = useState(false);
 	// const navigate = useNavigate();
 
+	//사용자 정보
 	const getUser = async () => {
 		try {
-			setUser(Object);
 			setLoading(true);
 
 			if (name) {
@@ -61,9 +72,54 @@ const Summoners = () => {
 		setLoading(false);
 	};
 
+	//모스트
+	const getMost = async () => {
+		console.log(1111);
+		try {
+			setLoading(true);
+
+			if (name) {
+				const response = await axios.get(`/summoner/${name}/mostInfo`, {
+					withCredentials: true, // 쿠키 cors 통신 설정
+				});
+				console.log(22, response.data);
+
+				//모스트 챔피언 정렬
+				const sortCham = response.data.champions.sort((a: any, b: any) => {
+					return b.games - a.games;
+				});
+
+				//중복제거
+				const checkArray = sortCham.filter((character: MostChampions, idx: number, arr: any) => {
+					return arr.findIndex((item: MostChampions) => item.key === character.key) === idx;
+				});
+
+				//최근7일 챔피언 정렬
+				const sortCham2 = response.data.recentWinRate.sort((a: any, b: any) => {
+					return b.games - a.games;
+				});
+
+				//중복제거
+				const checkArray2 = sortCham2.filter((character: RecentWinRate, idx: number, arr: any) => {
+					return arr.findIndex((item: RecentWinRate) => item.key === character.key) === idx;
+				});
+
+				console.log(33, checkArray, checkArray2);
+
+				setMost({ champions: checkArray, recentWinRate: checkArray2 });
+			} else {
+				console.log('모스트 정보가 없습니다.');
+			}
+		} catch (e) {
+			console.error(e);
+		}
+		setLoading(false);
+	};
+
 	const handleSearch = (e: any) => {
 		e.preventDefault();
 		getUser();
+		getMost();
 	};
 
 	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +128,7 @@ const Summoners = () => {
 		setName(e.target.value);
 	};
 
-	const getCustomTier = (tierRank: TierRankType) => {
+	const getCustomTier = (tierRank: TierRank) => {
 		const customTier = tierRank.tier + ' ' + tierRank.shortString.substring(1);
 
 		return customTier;
@@ -86,6 +142,7 @@ const Summoners = () => {
 
 	useEffect(() => {
 		getUser();
+		getMost();
 	}, []);
 
 	return (
@@ -128,7 +185,7 @@ const Summoners = () => {
 								<LankSymbol src={tierRank.imageUrl} />
 								<LankInfo>
 									<LankName>{tierRank.name}</LankName>
-									<TierRank>{getCustomTier(tierRank)}</TierRank>
+									<TierRankName>{getCustomTier(tierRank)}</TierRankName>
 									<Lp>
 										{tierRank.lp} LP
 										<WinLoosses>
@@ -142,7 +199,62 @@ const Summoners = () => {
 							</Lank>
 						))}
 
-						<FreeLank>freelank</FreeLank>
+						<FreeLank>
+							<>
+								<ul>
+									<li>챔피언 승률</li>
+									<li>7일간 랭크 승률</li>
+								</ul>
+
+								<div>
+									{most?.champions?.map(({ ...MostChampions }) => (
+										<ChampionBox key={MostChampions.key}>
+											<MostFace>
+												<img src={MostChampions.imageUrl} />
+											</MostFace>
+											<MostInfoCell>
+												<MostInfoName>{MostChampions.name}</MostInfoName>
+												<MostInfoCS>{MostChampions.cs}</MostInfoCS>
+											</MostInfoCell>
+											<MostInfoKDA>
+												<MostInfoScore>{MostChampions.wins}</MostInfoScore>
+												<div>
+													{MostChampions.kills}/{MostChampions.deaths}/{MostChampions.assists}
+												</div>
+											</MostInfoKDA>
+											<MostInfoPlayed>
+												<PlayedPercent>{MostChampions.wins}</PlayedPercent>
+												<PlayedCount>{MostChampions.losses}</PlayedCount>
+											</MostInfoPlayed>
+										</ChampionBox>
+									))}
+
+									{/* {most?.recentWinRate?.map(({ ...RecentWinRate }) => (
+										<div key={RecentWinRate.key}>
+											<MostFace>
+												<img src={RecentWinRate.imageUrl} />
+											</MostFace>
+											<div>
+												info
+												<div>{RecentWinRate.name}</div>
+											</div>
+											<div>
+												played
+												<div>{RecentWinRate.wins}</div>
+												<div>{RecentWinRate.losses}</div>
+											</div>
+											<div>
+												played
+												<div>{RecentWinRate.wins}</div>
+												<div>{RecentWinRate.losses}</div>
+											</div>
+										</div>
+									))} */}
+								</div>
+
+								<div>리스트</div>
+							</>
+						</FreeLank>
 						<WinningRate>승률</WinningRate>
 					</LeftSide>
 					<History>
