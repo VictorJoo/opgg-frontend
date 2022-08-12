@@ -67,7 +67,6 @@ export const FreeLank = styled.div`
 	margin-top: 8px;
 	border-radius: 2px;
 	border: solid 1px #cdd2d2;
-	padding: 17px 28px;
 	min-height: 98px;
 	background: #f2f2f2;
 `;
@@ -249,90 +248,131 @@ export const Late = styled.div`
 //최근 챔피언
 export const ChampionBox = styled.div`
 	display: table;
-	width: 100%;
+	width: 268px;
 	height: 48px;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	border-color: var(--gray200);
-	color: var(--gray400);
+	border-bottom: solid 1px #cdd2d2;
+	background-color: #ededed;
+
 	text-align: center;
 	table-layout: fixed;
+	padding: 3px 15px;
 `;
 
 export const MostFace = styled.div`
 	border-radius: 50%;
+	display: table-cell;
+	text-align: left;
+	vertical-align: middle;
+	// width: 45px;
+`;
+
+export const MostFaceImg = styled.img`
+	border-radius: 50%;
 	width: 45px;
 	height: 45px;
-	display: table-cell;
-	text-align: right;
-	vertical-align: middle;
+	// display: table-cell;
+	// text-align: right;
+	// vertical-align: middle;
 `;
 
 export const MostInfoCell = styled.div`
 	display: table-cell;
-	width: 100px;
+	// width: 67px;
 	text-align: left;
 	vertical-align: middle;
-	padding-left: 8px;
+	// padding-left: 10px;
 	box-sizing: border-box;
 `;
 
 export const MostInfoName = styled.div`
-	font-weight: bold;
-	font-size: 12px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+	font-family: AppleSDGothicNeo;
+	font-size: 13px;
+	font-weight: bold;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	color: #5e5e5e;
 `;
 
 export const MostInfoCS = styled.div`
-	margin-top: 2px;
+	margin-top: 3px;
 	font-size: 11px;
-	white-space: nowrap;
+	font-family: Helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	color: #879292;
 `;
 
-export const MostInfoKDA = styled.div`
+export const MostInfoKDACell = styled.div`
 	display: table-cell;
-	width: 100px;
+	// width: 75px;
 	vertical-align: middle;
 	text-align: center;
 	box-sizing: border-box;
 `;
 
-export const MostInfoScore = styled.div`
-	font-size: 12px;
-	font-weight: bold;
-	white-space: nowrap;
-	color: var(--gray500);
+export const MostInfoKDA = styled.div`
+	margin-top: 3px;
+	height: 13px;
+	font-family: Helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	text-align: center;
+	color: #879292;
 `;
 
-export const MostInfoDetail = styled.div`
-	margin-top: 2px;
-	font-size: 11px;
-	white-space: nowrap;
-	font-family: Roboto, sans-serif;
+export const MostInfoScore = styled.div`
+	font-family: Helvetica;
+	font-size: 13px;
+	font-weight: bold;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	text-align: center;
+	color: #5e5e5e;
 `;
 
 export const MostInfoPlayed = styled.div`
 	display: table-cell;
-	width: 88px;
 	vertical-align: middle;
 	text-align: center;
-	padding-right: 12px;
 	box-sizing: border-box;
 `;
 
 export const PlayedPercent = styled.div`
-	line-height: 15px;
-	font-size: 12px;
-	color: var(--gray500);
-	font-family: Roboto, sans-serif;
-	text-align: right;
+	font-family: Helvetica;
+	font-size: 13px;
+	font-weight: bold;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	text-align: center;
+	color: #5e5e5e;
 `;
 
 export const PlayedCount = styled.div`
-	margin-top: 2px;
+	margin-top: 3px;
+	font-family: Helvetica;
 	font-size: 11px;
-	white-space: nowrap;
-	text-align: right;
+	font-weight: normal;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	text-align: center;
+	color: #879292;
 `;

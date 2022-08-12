@@ -37,10 +37,12 @@ import {
 	MostInfoName,
 	MostInfoCS,
 	MostInfoKDA,
+	MostInfoKDACell,
 	MostInfoScore,
 	MostInfoPlayed,
 	PlayedPercent,
 	PlayedCount,
+	MostFaceImg,
 } from '@pages/Summoners/styles';
 
 import { Summoner, MostInfo, TierRank, MostChampions, RecentWinRate } from './types';
@@ -74,7 +76,6 @@ const Summoners = () => {
 
 	//모스트
 	const getMost = async () => {
-		console.log(1111);
 		try {
 			setLoading(true);
 
@@ -83,7 +84,6 @@ const Summoners = () => {
 					withCredentials: true, // 쿠키 cors 통신 설정
 				});
 				console.log(22, response.data);
-
 				//모스트 챔피언 정렬
 				const sortCham = response.data.champions.sort((a: any, b: any) => {
 					return b.games - a.games;
@@ -103,8 +103,6 @@ const Summoners = () => {
 				const checkArray2 = sortCham2.filter((character: RecentWinRate, idx: number, arr: any) => {
 					return arr.findIndex((item: RecentWinRate) => item.key === character.key) === idx;
 				});
-
-				console.log(33, checkArray, checkArray2);
 
 				setMost({ champions: checkArray, recentWinRate: checkArray2 });
 			} else {
@@ -210,46 +208,54 @@ const Summoners = () => {
 									{most?.champions?.map(({ ...MostChampions }) => (
 										<ChampionBox key={MostChampions.key}>
 											<MostFace>
-												<img src={MostChampions.imageUrl} />
+												<MostFaceImg src={MostChampions.imageUrl} />
 											</MostFace>
 											<MostInfoCell>
 												<MostInfoName>{MostChampions.name}</MostInfoName>
-												<MostInfoCS>{MostChampions.cs}</MostInfoCS>
+												<MostInfoCS>CS {MostChampions.cs}</MostInfoCS>
 											</MostInfoCell>
-											<MostInfoKDA>
-												<MostInfoScore>{MostChampions.wins}</MostInfoScore>
-												<div>
-													{MostChampions.kills}/{MostChampions.deaths}/{MostChampions.assists}
-												</div>
-											</MostInfoKDA>
+											<MostInfoKDACell>
+												<MostInfoScore>
+													{((MostChampions.kills + MostChampions.assists) / MostChampions.deaths).toFixed(2)}:1 평점
+												</MostInfoScore>
+												<MostInfoKDA>
+													{(MostChampions.kills / (MostChampions.wins + MostChampions.losses)).toFixed(1) +
+														' / ' +
+														(MostChampions.deaths / (MostChampions.wins + MostChampions.losses)).toFixed(1) +
+														' / ' +
+														(MostChampions.assists / (MostChampions.wins + MostChampions.losses)).toFixed(1)}
+												</MostInfoKDA>
+											</MostInfoKDACell>
 											<MostInfoPlayed>
-												<PlayedPercent>{MostChampions.wins}</PlayedPercent>
-												<PlayedCount>{MostChampions.losses}</PlayedCount>
+												<PlayedPercent>
+													{((MostChampions.wins / (MostChampions.wins + MostChampions.losses)) * 100).toFixed()}%
+												</PlayedPercent>
+												<PlayedCount>{MostChampions.wins + MostChampions.losses}게임</PlayedCount>
 											</MostInfoPlayed>
 										</ChampionBox>
 									))}
 
-									{/* {most?.recentWinRate?.map(({ ...RecentWinRate }) => (
-										<div key={RecentWinRate.key}>
+									{most?.recentWinRate?.map(({ ...RecentWinRate }) => (
+										<ChampionBox key={RecentWinRate.key}>
 											<MostFace>
-												<img src={RecentWinRate.imageUrl} />
+												<MostFaceImg src={RecentWinRate.imageUrl} />
 											</MostFace>
-											<div>
-												info
-												<div>{RecentWinRate.name}</div>
-											</div>
-											<div>
-												played
-												<div>{RecentWinRate.wins}</div>
-												<div>{RecentWinRate.losses}</div>
-											</div>
-											<div>
-												played
-												<div>{RecentWinRate.wins}</div>
-												<div>{RecentWinRate.losses}</div>
-											</div>
-										</div>
-									))} */}
+											<MostInfoCell>
+												<MostInfoName>{RecentWinRate.name}</MostInfoName>
+											</MostInfoCell>
+											<MostInfoKDACell>
+												<PlayedPercent>
+													{((RecentWinRate.wins / (RecentWinRate.wins + RecentWinRate.losses)) * 100).toFixed()}%
+												</PlayedPercent>
+											</MostInfoKDACell>
+											<MostInfoKDACell>
+												<div>
+													{RecentWinRate.wins}
+													{RecentWinRate.losses}
+												</div>
+											</MostInfoKDACell>
+										</ChampionBox>
+									))}
 								</div>
 
 								<div>리스트</div>
