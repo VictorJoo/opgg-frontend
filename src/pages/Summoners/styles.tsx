@@ -71,18 +71,11 @@ export const FreeLank = styled.div`
 	background: #f2f2f2;
 `;
 
-export const WinningRate = styled.div`
-	margin-top: 8px;
+export const TotalHeader = styled.ul`
 	border-radius: 2px;
 	border: solid 1px #cdd2d2;
-	padding: 10px 8px;
-	background: #f2f2f2;
-`;
-
-export const TotalHeader = styled.div`
-	border-radius: 2px;
-	border: solid 1px #cdd2d2;
-	padding: 10px 16px;
+	border-bottom: none;
+	padding: 10px 16px 0 16px;
 	background: #f2f2f2;
 
 	font-family: NanumBarunGothicOTF;
@@ -93,6 +86,7 @@ export const TotalHeader = styled.div`
 	line-height: normal;
 	letter-spacing: normal;
 	color: #555;
+	margin: 0;
 `;
 
 export const Total = styled.div`
@@ -108,13 +102,14 @@ export const MatchWrapper = styled.div`
 	background: #ededed;
 `;
 
-export const MatchItem = styled.div`
+export const MatchItem = styled.div<{ isWin?: boolean }>`
 	margin-top: 8px;
 	background: #ededed;
 	height: 96px;
 	padding: 0 0 0 15px;
-	border: solid 1px #a1b8cd;
-	background-color: #b0ceea;
+	border: solid 1px ${({ isWin }) => (isWin ? '#a1b8cd;' : '#c0aba8;')};
+	background-color: ${({ isWin }) => (isWin ? '#b0ceea;' : '#d6b5b2;')};
+	display: flex;
 `;
 
 export const ProfileBorder = styled.div<{ src?: string }>`
@@ -263,24 +258,18 @@ export const MostFace = styled.div`
 	display: table-cell;
 	text-align: left;
 	vertical-align: middle;
-	// width: 45px;
 `;
 
 export const MostFaceImg = styled.img`
 	border-radius: 50%;
 	width: 45px;
 	height: 45px;
-	// display: table-cell;
-	// text-align: right;
-	// vertical-align: middle;
 `;
 
 export const MostInfoCell = styled.div`
 	display: table-cell;
-	// width: 67px;
 	text-align: left;
 	vertical-align: middle;
-	// padding-left: 10px;
 	box-sizing: border-box;
 `;
 
@@ -375,4 +364,194 @@ export const PlayedCount = styled.div`
 	letter-spacing: normal;
 	text-align: center;
 	color: #879292;
+`;
+
+export const RecentFaceImg = styled.img`
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+`;
+
+export const Graph = styled.div`
+	width: 123px;
+	border-radius: 4px;
+	position: relative;
+	display: inline-block;
+	height: 24px;
+	overflow: hidden;
+`;
+
+export const Win = styled.div<{ width?: number }>`
+	background-color: #1f8ecd;
+	width: ${({ width }) => `${width}%;`};
+	display: inline-block;
+	vertical-align: middle;
+	height: 100%;
+	z-index: 2;
+	text-align: left;
+`;
+
+export const Losses = styled.div<{ width?: number }>`
+	background-color: #ee5a52;
+	width: ${({ width }) => `${width}%;`};
+	display: inline-block;
+	vertical-align: middle;
+	height: 100%;
+	z-index: 1;
+	text-align: right;
+`;
+
+export const WinText = styled.div`
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	text-align: left;
+	font-family: Helvetica;
+	font-size: 12px;
+	font-weight: bold;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	color: #fff;
+`;
+
+export const LossesText = styled.div`
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	text-align: left;
+	font-family: Helvetica;
+	font-size: 12px;
+	font-weight: bold;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	color: #fff;
+`;
+
+export const RecentFace = styled.div`
+	border-radius: 50%;
+	display: table-cell;
+	text-align: left;
+	vertical-align: middle;
+	width: 45px;
+`;
+
+export const RecentCell = styled.div`
+	display: table-cell;
+	text-align: left;
+	vertical-align: middle;
+	box-sizing: border-box;
+	width: 50px;
+`;
+
+export const RecentRateCell = styled.div`
+	display: table-cell;
+	// width: 75px;
+	vertical-align: middle;
+	text-align: center;
+	box-sizing: border-box;
+	width: 55px;
+`;
+
+export const TabUl = styled.ul`
+	margin: 0;
+	padding: 0;
+	display: flex;
+	width: 100%;
+`;
+
+export const Tabli = styled.li<{ tabState?: boolean }>`
+	height: 44px;
+	background-color: ${({ tabState }) => (tabState ? '#ededed;' : '#f2f2f2;')};
+	border: ${({ tabState }) => (tabState ? 'solid 1px #ededed;' : 'solid 1px #cdd2d2;')};
+	display: inline-block;
+	width: 50%;
+`;
+
+export const TabName = styled.p<{ tabState?: boolean }>`
+	font-family: AppleSDGothicNeo;
+	font-size: 12px;
+	font-weight: bold;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	color: ${({ tabState }) => (tabState ? '#5e5e5e;' : '#879292;')};
+	text-align: center;
+	margin: 15px 0;
+`;
+
+export const TotalTab = styled.span<{ tabState?: boolean }>`
+	margin-right: 15px;
+	display: inline-block;
+	font-family: NanumBarunGothicOTF;
+	font-size: 12px;
+	font-weight: normal;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	color: ${({ tabState }) => (tabState ? '#1f8ecd;' : '#555;')};
+	border-bottom: ${({ tabState }) => (tabState ? 'solid 2px #1f8ecd;' : 'none')};
+	padding-bottom: 6px;
+	width: 50px;
+	text-align: center;
+`;
+
+export const TypeCell = styled.div`
+	text-align: center;
+	font-family: AppleSDGothicNeo;
+	font-size: 11px;
+	font-stretch: normal;
+	font-style: normal;
+	line-height: normal;
+	letter-spacing: -0.42px;
+	font-weight: normal;
+	justify-content: center;
+	display: flex;
+	flex-flow: column;
+`;
+
+export const ChampionCell = styled.div``;
+
+export const GameInfoCell = styled.div`
+	display: block;
+`;
+
+export const ItemCell = styled.div`
+	display: block;
+`;
+
+export const TeamCell = styled.div`
+	display: block;
+`;
+
+export const More = styled.div`
+	display: block;
+`;
+
+export const GameType = styled.span`
+	font-weight: bold;
+	margin: 2px;
+	color: #555;
+`;
+
+export const GameDate = styled.span`
+	margin: 2px;
+`;
+
+export const GameBar = styled.div<{ isWin?: boolean }>`
+	width: 27px;
+	height: 1px;
+	margin: 3px auto;
+	background-color: ${({ isWin }) => (isWin ? '#94b9d6;' : '#d0a6a5;')};
+`;
+
+export const GameWin = styled.span<{ isWin?: boolean }>`
+	font-weight: bold;
+	margin: 2px;
+	color: ${({ isWin }) => (isWin ? '#2c709b;' : '#d0021b;')};
 `;

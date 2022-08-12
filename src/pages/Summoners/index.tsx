@@ -10,7 +10,6 @@ import {
 	History,
 	Lank,
 	FreeLank,
-	WinningRate,
 	Total,
 	TotalHeader,
 	MatchWrapper,
@@ -43,15 +42,41 @@ import {
 	PlayedPercent,
 	PlayedCount,
 	MostFaceImg,
+	RecentFaceImg,
+	Graph,
+	Win,
+	Losses,
+	WinText,
+	LossesText,
+	RecentFace,
+	RecentCell,
+	RecentRateCell,
+	TabUl,
+	Tabli,
+	TabName,
+	TotalTab,
+	TypeCell,
+	ChampionCell,
+	GameInfoCell,
+	ItemCell,
+	TeamCell,
+	More,
+	GameType,
+	GameDate,
+	GameBar,
+	GameWin,
 } from '@pages/Summoners/styles';
 
-import { Summoner, MostInfo, TierRank, MostChampions, RecentWinRate } from './types';
+import { Summoner, MostInfo, TierRank, MostChampions, RecentWinRate, Matches, MatchesGames } from './types';
 
 const Summoners = () => {
 	const [name, setName] = useState('소환사');
 	const [user, setUser] = useState<Summoner>();
 	const [most, setMost] = useState<MostInfo>();
+	const [matches, setMatches] = useState<Matches>();
 	const [loading, setLoading] = useState(false);
+	const [rateTab, setRateTab] = useState('champion');
+	const [totalTab, setTotalTab] = useState('all');
 	// const navigate = useNavigate();
 
 	//사용자 정보
@@ -64,7 +89,6 @@ const Summoners = () => {
 					withCredentials: true, // 쿠키 cors 통신 설정
 				});
 				setUser(response.data.summoner);
-				console.log(response.data.summoner);
 			} else {
 				console.log('검색어가 없습니다.');
 			}
@@ -83,7 +107,6 @@ const Summoners = () => {
 				const response = await axios.get(`/summoner/${name}/mostInfo`, {
 					withCredentials: true, // 쿠키 cors 통신 설정
 				});
-				console.log(22, response.data);
 				//모스트 챔피언 정렬
 				const sortCham = response.data.champions.sort((a: any, b: any) => {
 					return b.games - a.games;
@@ -114,10 +137,30 @@ const Summoners = () => {
 		setLoading(false);
 	};
 
+	//매치 리스트
+	const getMatches = async () => {
+		try {
+			setLoading(true);
+
+			if (name) {
+				const response = await axios.get(`/summoner/${name}/matches`, {
+					withCredentials: true, // 쿠키 cors 통신 설정
+				});
+				setMatches(response.data);
+			} else {
+				console.log('검색어가 없습니다.');
+			}
+		} catch (e) {
+			console.error(e);
+		}
+		setLoading(false);
+	};
+
 	const handleSearch = (e: any) => {
 		e.preventDefault();
 		getUser();
 		getMost();
+		getMatches();
 	};
 
 	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,9 +181,18 @@ const Summoners = () => {
 		return late;
 	};
 
+	const changeTab = (tabName: string) => {
+		setRateTab(tabName);
+	};
+
+	const changeTotalTab = (tabName: string) => {
+		setTotalTab(tabName);
+	};
+
 	useEffect(() => {
 		getUser();
 		getMost();
+		getMatches();
 	}, []);
 
 	return (
@@ -178,7 +230,7 @@ const Summoners = () => {
 				</Profile>
 				<Container>
 					<LeftSide>
-						{user?.leagues?.map(({ hasResults, wins, losses, tierRank }) => (
+						{user?.leagues?.map(({ wins, losses, tierRank }) => (
 							<Lank key={tierRank.name}>
 								<LankSymbol src={tierRank.imageUrl} />
 								<LankInfo>
@@ -199,83 +251,148 @@ const Summoners = () => {
 
 						<FreeLank>
 							<>
-								<ul>
-									<li>챔피언 승률</li>
-									<li>7일간 랭크 승률</li>
-								</ul>
+								<TabUl>
+									<Tabli tabState={rateTab === 'champion'} onClick={() => changeTab('champion')}>
+										<TabName tabState={rateTab === 'champion'}>챔피언 승률</TabName>
+									</Tabli>
+									<Tabli tabState={rateTab === 'recent'} onClick={() => changeTab('recent')}>
+										<TabName tabState={rateTab === 'recent'}>7일간 랭크 승률</TabName>
+									</Tabli>
+								</TabUl>
 
 								<div>
-									{most?.champions?.map(({ ...MostChampions }) => (
-										<ChampionBox key={MostChampions.key}>
-											<MostFace>
-												<MostFaceImg src={MostChampions.imageUrl} />
-											</MostFace>
-											<MostInfoCell>
-												<MostInfoName>{MostChampions.name}</MostInfoName>
-												<MostInfoCS>CS {MostChampions.cs}</MostInfoCS>
-											</MostInfoCell>
-											<MostInfoKDACell>
-												<MostInfoScore>
-													{((MostChampions.kills + MostChampions.assists) / MostChampions.deaths).toFixed(2)}:1 평점
-												</MostInfoScore>
-												<MostInfoKDA>
-													{(MostChampions.kills / (MostChampions.wins + MostChampions.losses)).toFixed(1) +
-														' / ' +
-														(MostChampions.deaths / (MostChampions.wins + MostChampions.losses)).toFixed(1) +
-														' / ' +
-														(MostChampions.assists / (MostChampions.wins + MostChampions.losses)).toFixed(1)}
-												</MostInfoKDA>
-											</MostInfoKDACell>
-											<MostInfoPlayed>
-												<PlayedPercent>
-													{((MostChampions.wins / (MostChampions.wins + MostChampions.losses)) * 100).toFixed()}%
-												</PlayedPercent>
-												<PlayedCount>{MostChampions.wins + MostChampions.losses}게임</PlayedCount>
-											</MostInfoPlayed>
-										</ChampionBox>
-									))}
-
-									{most?.recentWinRate?.map(({ ...RecentWinRate }) => (
-										<ChampionBox key={RecentWinRate.key}>
-											<MostFace>
-												<MostFaceImg src={RecentWinRate.imageUrl} />
-											</MostFace>
-											<MostInfoCell>
-												<MostInfoName>{RecentWinRate.name}</MostInfoName>
-											</MostInfoCell>
-											<MostInfoKDACell>
-												<PlayedPercent>
-													{((RecentWinRate.wins / (RecentWinRate.wins + RecentWinRate.losses)) * 100).toFixed()}%
-												</PlayedPercent>
-											</MostInfoKDACell>
-											<MostInfoKDACell>
-												<div>
-													{RecentWinRate.wins}
-													{RecentWinRate.losses}
-												</div>
-											</MostInfoKDACell>
-										</ChampionBox>
-									))}
+									{rateTab === 'champion'
+										? most?.champions?.map(({ ...MostChampions }) => (
+												<ChampionBox key={MostChampions.key}>
+													<MostFace>
+														<MostFaceImg src={MostChampions.imageUrl} />
+													</MostFace>
+													<MostInfoCell>
+														<MostInfoName>{MostChampions.name}</MostInfoName>
+														<MostInfoCS>CS {MostChampions.cs}</MostInfoCS>
+													</MostInfoCell>
+													<MostInfoKDACell>
+														<MostInfoScore>
+															{((MostChampions.kills + MostChampions.assists) / MostChampions.deaths).toFixed(2)}:1 평점
+														</MostInfoScore>
+														<MostInfoKDA>
+															{(MostChampions.kills / (MostChampions.wins + MostChampions.losses)).toFixed(1) +
+																' / ' +
+																(MostChampions.deaths / (MostChampions.wins + MostChampions.losses)).toFixed(1) +
+																' / ' +
+																(MostChampions.assists / (MostChampions.wins + MostChampions.losses)).toFixed(1)}
+														</MostInfoKDA>
+													</MostInfoKDACell>
+													<MostInfoPlayed>
+														<PlayedPercent>
+															{((MostChampions.wins / (MostChampions.wins + MostChampions.losses)) * 100).toFixed()}%
+														</PlayedPercent>
+														<PlayedCount>{MostChampions.wins + MostChampions.losses}게임</PlayedCount>
+													</MostInfoPlayed>
+												</ChampionBox>
+										  ))
+										: most?.recentWinRate?.map(({ ...RecentWinRate }) => (
+												<ChampionBox key={RecentWinRate.key}>
+													<RecentFace>
+														<RecentFaceImg src={RecentWinRate.imageUrl} />
+													</RecentFace>
+													<RecentCell>
+														<MostInfoName>{RecentWinRate.name}</MostInfoName>
+													</RecentCell>
+													<RecentRateCell>
+														<PlayedPercent>
+															{((RecentWinRate.wins / (RecentWinRate.wins + RecentWinRate.losses)) * 100).toFixed()}%
+														</PlayedPercent>
+													</RecentRateCell>
+													<MostInfoKDACell>
+														<Graph>
+															<Win
+																width={Number(
+																	((RecentWinRate.wins / (RecentWinRate.wins + RecentWinRate.losses)) * 100).toFixed(),
+																)}
+															/>
+															<WinText>{RecentWinRate.wins}승</WinText>
+															<Losses
+																width={Number(
+																	(
+																		(RecentWinRate.losses / (RecentWinRate.wins + RecentWinRate.losses)) *
+																		100
+																	).toFixed(),
+																)}
+															/>
+															<LossesText>{RecentWinRate.losses}패</LossesText>
+														</Graph>
+													</MostInfoKDACell>
+												</ChampionBox>
+										  ))}
 								</div>
-
-								<div>리스트</div>
 							</>
 						</FreeLank>
-						<WinningRate>승률</WinningRate>
 					</LeftSide>
 					<History>
 						<TotalHeader>
-							<span>전체</span>
-							<span>솔로 랭크</span>
-							<span>자유랭크</span>
+							<TotalTab tabState={totalTab === 'all'} onClick={() => changeTotalTab('all')}>
+								전체
+							</TotalTab>
+							<TotalTab tabState={totalTab === 'solo'} onClick={() => changeTotalTab('솔랭')}>
+								솔로 랭크
+							</TotalTab>
+							<TotalTab tabState={totalTab === 'free'} onClick={() => changeTotalTab('자유 5:5 랭크')}>
+								자유랭크
+							</TotalTab>
 						</TotalHeader>
-						<Total>통계</Total>
-						<MatchWrapper>
-							<MatchItem>기록</MatchItem>
-							<MatchItem>기록</MatchItem>
-							<MatchItem>기록</MatchItem>
-							<MatchItem>기록</MatchItem>
-						</MatchWrapper>
+						{matches && (
+							<>
+								<Total>
+									<div>
+										<div>
+											{matches.summary.wins + matches.summary.losses}전 {matches.summary.wins}승{' '}
+											{matches.summary.losses}패
+										</div>
+									</div>
+									<div>cham</div>
+									<div>position</div>
+								</Total>
+
+								<MatchWrapper>
+									{matches.games.map(({ ...MatchesGames }) =>
+										totalTab === 'all' ? (
+											<MatchItem key={MatchesGames.gameId} isWin={MatchesGames.isWin}>
+												<TypeCell>
+													<GameType>{MatchesGames.gameType}</GameType>
+													<GameDate>{MatchesGames.createDate}</GameDate>
+													<GameBar isWin={MatchesGames.isWin}></GameBar>
+													<GameWin isWin={MatchesGames.isWin}>{MatchesGames.isWin ? '승리' : '패배'}</GameWin>
+													<GameDate>{MatchesGames.gameLength}</GameDate>
+												</TypeCell>
+												<ChampionCell></ChampionCell>
+												<GameInfoCell></GameInfoCell>
+												<ItemCell></ItemCell>
+												<TeamCell></TeamCell>
+												<More></More>
+											</MatchItem>
+										) : (
+											totalTab === MatchesGames.gameType && (
+												<MatchItem key={MatchesGames.gameId} isWin={MatchesGames.isWin}>
+													<TypeCell>
+														<GameType>{MatchesGames.gameType}</GameType>
+														<GameDate>{MatchesGames.createDate}</GameDate>
+														<GameBar isWin={MatchesGames.isWin}></GameBar>
+														<GameWin isWin={MatchesGames.isWin}>{MatchesGames.isWin ? '승리' : '패배'}</GameWin>
+														<GameDate>{MatchesGames.gameLength}</GameDate>
+													</TypeCell>
+													<ChampionCell></ChampionCell>
+													<GameInfoCell></GameInfoCell>
+													<ItemCell></ItemCell>
+													<TeamCell></TeamCell>
+													<More></More>
+												</MatchItem>
+											)
+										),
+									)}
+								</MatchWrapper>
+							</>
+						)}
 					</History>
 				</Container>
 			</MainLayout>
